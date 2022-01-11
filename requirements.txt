@@ -3,3 +3,7 @@ pandas
 requests
 scikit-learn
 pyquery
+bokeh
+dask
+tqdm
+lzma
