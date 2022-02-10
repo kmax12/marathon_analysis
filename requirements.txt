@@ -6,4 +6,4 @@ pyquery
 bokeh
 dask
 tqdm
-lzma
+matplotlib

@@ -1,0 +1,195 @@
+<style>
+    canvas.dots {
+    position: absolute;
+    top: 0;
+    left: 0;
+    }
+</style>
+
+<body>
+    <canvas id="myCanvas" class="dots" width="500" height="500">Your browser does not support canvas.</canvas>
+
+    <script>
+        var canvas = document.getElementById("myCanvas");
+        var mainContext = canvas.getContext('2d');
+        var canvasWidth = canvas.width;
+        var canvasHeight = canvas.height;
+
+
+
+        var marathonDistance = 42.195
+
+        var splitTimes = {
+            0: 0,
+            5: 883,
+            10: 1765,
+            15: 2663,
+            20: 3564,
+            21.0975: 3760,
+            25: 4484,
+            30: 5407,
+            35: 6302,
+            40: 7193,
+            42.195: 7595
+        }
+
+    
+        var splitOrder = [0, 5, 10, 15, 20, 21.0975, 25, 30, 35, 40, 42.195]
+
+        class Runner {
+            constructor(splitTimes) {
+                this.splitTimes = splitTimes
+                this.time = 0
+                this.currentSplitIndex = 0
+                this.jigger = Math.random()
+                this.color = Math.floor(Math.random()*16777215).toString(16)
+                this.finishTime = splitTimes[marathonDistance]
+            }
+            // Getter
+            get distanceTraveled() {
+                var currentSplit = splitOrder[this.currentSplitIndex]
+
+                if (currentSplit == marathonDistance){
+                    this.color = "0f0"
+                    return marathonDistance;
+                }
+
+                var currentSplitTime = this.splitTimes[currentSplit]
+
+                var nextSplitIndex = this.currentSplitIndex;
+                var nextSplit = null;
+                var nextSplitTime = null;
+                while (nextSplitTime == null){
+                    nextSplitIndex = nextSplitIndex + 1;
+                    nextSplit = splitOrder[nextSplitIndex]
+                    nextSplitTime = this.splitTimes[nextSplit];
+                    // break;
+                }
+        
+                
+                var distanceBetwenSplits = nextSplit - currentSplit
+
+                
+
+                
+                
+                var progressToNextSplit = (this.time - currentSplitTime) / (nextSplitTime - currentSplitTime)
+                var distance = splitOrder[this.currentSplitIndex] + distanceBetwenSplits*progressToNextSplit
+                // console.log(currentSplit, this.splitTimes, currentSplitTime, nextSplit, nextSplitTime, distance)
+                if (distance == null){
+                    return 0;
+                } else{
+                    // console.log(0)
+                    return distance
+                }
+            }
+            // Method
+            progressTime(numSeconds) {
+                this.time = this.time + numSeconds;
+                // check if time is greater than next split time
+                if (this.time >= this.splitTimes[splitOrder[this.currentSplitIndex+1]]){
+                    this.currentSplitIndex = this.currentSplitIndex + 1
+                }
+
+                // console.log(this.time)
+            }
+
+        }
+
+        function tickSecond() {
+            for (const r in allRunners){
+                allRunners[r].progressTime(60)
+                // if (allRunners[r].distanceTraveled > 0){
+                //     console.log(allRunners[r], allRunners[r].distanceTraveled)
+                // }
+            }
+
+            mainContext.clearRect(0, 0, canvasWidth, canvasHeight);
+            for (const r in allRunners){
+                drawRunner(allRunners[r])
+                // console.log(allRunners[r].distanceTraveled)
+            }
+            
+            window.requestAnimationFrame(tickSecond)
+            // setTimeout(function(){window.requestAnimationFrame(tickSecond)}, 10)
+        }
+
+        function drawRunner(r) {
+            mainContext.beginPath();
+            const radius = 10
+            mainContext.arc(r.distanceTraveled*10, 100+r.jigger*200, radius, 0, 2 * Math.PI);
+            mainContext.fillStyle = "#"+r.color;
+            mainContext.fill();
+        }
+
+
+
+        var allRunners = []
+        fetch("http://127.0.0.1:8080/data/animate_runners.json")
+        .then(response => response.json())
+        .then(function(data){
+            for (const runner of data){
+
+                // skip runner with missing split
+                var skipRunner = false;
+                for (const [split, time] of Object.entries(runner)){
+                    if (time == null) {
+                        skipRunner = true
+                        continue
+                    }
+                }
+
+                if (skipRunner){
+                    continue
+                }
+                allRunners.push(new Runner(runner))
+            }
+
+            allRunners = allRunners //.slice(10000, 12000);
+            // allRunners.sort(function(a, b){return a.finishTime > b.finishTime});
+            console.log(allRunners)
+            
+            tickSecond()
+            
+            // function startMarathon() {    
+            //     setTimeout(function() {   
+            //         tickSecond()
+
+            //         if (time % (60*10) == 0){
+            //             console.log(time);
+            //         } 
+            //         time++;                    //  increment the counter
+            //         if (time < 7595) {           //  if the counter < 10, call the loop function
+            //             ;             //  ..  again which will trigger another 
+            //         }                       //  ..  setTimeout()
+            //     }, 0)
+            // }
+
+
+
+        })
+
+        
+
+
+
+
+
+
+
+//         0
+// 5km.time                                                   883.0
+// 10km.time                                                 1765.0
+// 15km.time                                                 2663.0
+// 20km.time                                                 3564.0
+// half.time                                                 3760.0
+// 25km.time                                                 4484.0
+// 30km.time                                                 5407.0
+// 35km.time                                                 6302.0
+// 40km.time                                                 7193.0
+// finish.time                                                 7595
+
+    </script>
+
+</body>
+
