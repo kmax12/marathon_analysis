@@ -1,38 +1,70 @@
 <style>
     canvas.dots {
-    position: absolute;
-    top: 0;
-    left: 0;
+        position: absolute;
+        top: 45px;
+        left: 176px;
+    }
+
+    #mySvg {
+        width: 100%;
+        height: 100%;
+        stroke: black;
+        stroke-width: 2px;
+        fill: none; 
+        position: absolute;
+        top: 45px;
+        left: 176px;
+        z-index: -1;
+    }
+
+    #map-background{
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: -2;
+        z-index: -2;
+        width: 681px;
+    }
+
+    #time-display{
+      font-size: 2em;
+      background-color:#444;
+      color: #fff;
+      display: inline-block;
+      padding: 5px 10px;
     }
 </style>
 
-<body>
-    <canvas id="myCanvas" class="dots" width="500" height="500">Your browser does not support canvas.</canvas>
+<!-- http://jnordberg.github.io/gif.js/tests/canvas.html -->
 
+<body>
+    <img id="map-background" src="/data/map-background.svg" />
+    <canvas id="myCanvas" class="dots" width="1000" height="1000">Your browser does not support canvas.</canvas>
+    <svg id="mySvg"></svg>
+    <div id="time-display"></div>
     <script>
         var canvas = document.getElementById("myCanvas");
+        var svg = document.getElementById("mySvg");
+        var timeDisplay = document.getElementById("time-display");
         var mainContext = canvas.getContext('2d');
         var canvasWidth = canvas.width;
         var canvasHeight = canvas.height;
 
 
+        const path = 'M 279.94 339.9 L 279.78 336.4 L 279.78 333.87 L 280.48 330.89 L 280.32 307.4 L 280.29 305.06 L 282.58 289.22 L 282.52 285.18 L 256.24 285.65 L 256.86 285.64 L 256.91 286.74 L 256.97 288.41 L 257.02 289.64 L 257.16 293.63 L 250.4 293.76 L 248.87 293.79 L 243.46 293.87 L 243.81 315.47 L 244.62 334.04 L 244.89 340.54 L 245.18 353.35 L 222.37 353.7 L 221.86 334.49 L 217.91 188.06 L 217.85 185.86 L 217.75 182.55 L 217.69 180.64 L 217.91 179.43 L 217.83 178.98 L 217.91 179.43 L 218.2 178.97 L 218.6 178.62 L 219.41 178.22 L 220.41 177.52 L 222.5 176.88 L 224.87 176.66 L 224.66 174.02 L 224.2 173 L 220.3 168.94 L 219.09 166.09 L 213.28 159.42 L 211.58 151.4 L 210.13 148.09 L 206.85 144.62 L 205.66 142.77 L 205.5 140.72 L 204.27 117.85 L 203.35 115.54 L 215.72 115.19 L 208.57 103.06 L 198.35 88.56 L 196.04 86 L 188.72 81.19 L 186.94 79.2 L 186.84 60.16 L 185.84 43.12 L 185.76 39.46 L 185.71 37.47 L 184.59 34.34 L 183.74 31.96 L 171.36 8.68 L 169.4 4.62 L 166.6 0 L 163.32 1.05 L 155.71 3.52 L 146.83 6.48 L 157.4 22.87 L 160.87 29.78 L 162.22 71.26 L 162.14 72.2 L 159.99 75.48 L 158.91 79.79 L 159.66 82.88 L 162.03 87.11 L 165.5 92.67 L 169.51 96.14 L 192.16 134 L 188.8 134.05 L 189.31 143.11 L 190.6 188.89 L 190.58 188.42 L 195.12 188.31 L 200.15 188.2 L 204.97 188.2 L 209.92 188.14 L 210.18 198.13 L 210.48 205.61 L 211.2 205.58 L 210.48 205.61 L 210.72 210.42 L 213.49 294.27 L 198.64 294.57 L 198.78 300.89 L 206.55 309.53 L 206.61 310.42 L 206.54 313.27 L 206.9 334.63 L 207.01 337.99 L 207.06 341.06 L 207.36 347.48 L 37.07 350.12 L 32.63 350.17 L -0 350.79 L 0.41 363.41 L 3.66 363.46 L 15.2 363.28 L 21.77 363.17 L 24.92 360.42 L 29.54 356.55 L 147.07 354.64 L 148.93 396.07 L 122.22 397.07 L 51.14 398.22 L 51.47 410.06 L 51.06 410.62 L 50.95 414.58 L 52.22 455.65 L 150.14 454.23 L 151.11 490.9 L 150.95 508.76 L 160.87 503.94 L 166.09 502.79 L 172.2 500.23 L 180.03 496.22 L 184.79 492.35 L 209.46 480.46 L 223.5 480.81 L 224.12 502.63 L 222.8 508.06 L 223.02 511.5 L 224.17 517.23 L 224.53 524.95 L 225.63 572.08 L 250.24 571.63 L 251.1 571.63 L 251.1 573.24 L 251.18 580.85 L 251.29 590 L 252.61 590 L 267.4 589.94 L 265.17 510.05 L 263.02 407.31 L 281.79 407.05 L 281.23 402.5 L 281.05 394.84'
 
-        var marathonDistance = 42.195
+        const pathElement = document.createElementNS('http://www.w3.org/2000/svg',"path"); 
+        pathElement.setAttributeNS(null, 'd', path);
+        svg.appendChild(pathElement)
 
-        var splitTimes = {
-            0: 0,
-            5: 883,
-            10: 1765,
-            15: 2663,
-            20: 3564,
-            21.0975: 3760,
-            25: 4484,
-            30: 5407,
-            35: 6302,
-            40: 7193,
-            42.195: 7595
+        const pathLength = pathElement.getTotalLength()
+
+        var pathLocations = {};
+        for (let step = 0; step <= 10000; step++) {
+            var percent = step/10000
+            pathLocations[percent] = pathElement.getPointAtLength(pathLength*percent)
         }
-
+        var marathonDistance = 42.195
     
         var splitOrder = [0, 5, 10, 15, 20, 21.0975, 25, 30, 35, 40, 42.195]
 
@@ -41,10 +73,21 @@
                 this.splitTimes = splitTimes
                 this.time = 0
                 this.currentSplitIndex = 0
-                this.jigger = Math.random()
+                this.theta = Math.random() * 2 * Math.PI
+                this.r = Math.random()
                 this.color = Math.floor(Math.random()*16777215).toString(16)
+                this.color = 'f00';
+                if (splitTimes[42.195] < 4*60*60){
+                    this.color = '0f0'
+                }
+                // console.log(splitTimes[42.195])
                 this.finishTime = splitTimes[marathonDistance]
             }
+
+            get finished(){
+                return this.distanceTraveled >= marathonDistance;
+            }
+
             // Getter
             get distanceTraveled() {
                 var currentSplit = splitOrder[this.currentSplitIndex]
@@ -98,26 +141,39 @@
 
         function tickSecond() {
             for (const r in allRunners){
-                allRunners[r].progressTime(60)
-                // if (allRunners[r].distanceTraveled > 0){
-                //     console.log(allRunners[r], allRunners[r].distanceTraveled)
-                // }
+                if (!allRunners[r].finished){
+                    allRunners[r].progressTime(10)
+                }
             }
+
+            function convertSeconds(seconds) {
+                var convert = function(x) { return (x < 10) ? "0"+x : x; }
+                return convert(parseInt(seconds / (60*60))) + ":" +
+                        convert(parseInt(seconds / 60 % 60)) + ":" +
+                        convert(seconds % 60)
+            }
+
+            timeDisplay.innerHTML = convertSeconds(allRunners.slice(-1)[0].time)
 
             mainContext.clearRect(0, 0, canvasWidth, canvasHeight);
             for (const r in allRunners){
-                drawRunner(allRunners[r])
-                // console.log(allRunners[r].distanceTraveled)
+                if (!allRunners[r].finished){
+                    drawRunner(allRunners[r])
+                }
             }
             
             window.requestAnimationFrame(tickSecond)
-            // setTimeout(function(){window.requestAnimationFrame(tickSecond)}, 10)
         }
 
         function drawRunner(r) {
             mainContext.beginPath();
-            const radius = 10
-            mainContext.arc(r.distanceTraveled*10, 100+r.jigger*200, radius, 0, 2 * Math.PI);
+            const radius = 3
+            const percentComplete = r.distanceTraveled / marathonDistance
+            const point = pathLocations[parseFloat(percentComplete.toFixed(4))] // parsefloat to remove trailing zero
+            console.log(Math.cos(r.jigger), Math.sin(r.jigger))
+            const x = point.x + r.r*5*Math.cos(r.theta)
+            const y = point.y + r.r*5*Math.sin(r.theta)
+            mainContext.arc(x, y, radius, 0, 2 * Math.PI);
             mainContext.fillStyle = "#"+r.color;
             mainContext.fill();
         }
@@ -125,13 +181,23 @@
 
 
         var allRunners = []
-        fetch("http://127.0.0.1:8080/data/animate_runners.json")
+        fetch("/data/animate_runners.json")
         .then(response => response.json())
         .then(function(data){
             for (const runner of data){
 
+
+                skipRunner=true
+                // include if faster than 
+                if (runner[42.195] < 4.1*60*60 && runner[42.195] > 3.9*60*60 ){
+                    console.log(runner[42.195]/60/60)
+                    skipRunner = false;
+                }
+
+
+
                 // skip runner with missing split
-                var skipRunner = false;
+                // var skipRunner = false;
                 for (const [split, time] of Object.entries(runner)){
                     if (time == null) {
                         skipRunner = true
@@ -139,57 +205,193 @@
                     }
                 }
 
+                
+                
+
                 if (skipRunner){
                     continue
                 }
+
                 allRunners.push(new Runner(runner))
             }
 
-            allRunners = allRunners //.slice(10000, 12000);
-            // allRunners.sort(function(a, b){return a.finishTime > b.finishTime});
+            allRunners = allRunners//.slice(0,500);
+            allRunners.sort(function(a, b){return a.finishTime < b.finishTime});
             console.log(allRunners)
             
             tickSecond()
             
-            // function startMarathon() {    
-            //     setTimeout(function() {   
-            //         tickSecond()
-
-            //         if (time % (60*10) == 0){
-            //             console.log(time);
-            //         } 
-            //         time++;                    //  increment the counter
-            //         if (time < 7595) {           //  if the counter < 10, call the loop function
-            //             ;             //  ..  again which will trigger another 
-            //         }                       //  ..  setTimeout()
-            //     }, 0)
-            // }
 
 
 
         })
-
-        
-
-
-
-
-
-
-
-//         0
-// 5km.time                                                   883.0
-// 10km.time                                                 1765.0
-// 15km.time                                                 2663.0
-// 20km.time                                                 3564.0
-// half.time                                                 3760.0
-// 25km.time                                                 4484.0
-// 30km.time                                                 5407.0
-// 35km.time                                                 6302.0
-// 40km.time                                                 7193.0
-// finish.time                                                 7595
-
     </script>
 
 </body>
 
+
+
+<!-- [
+  {
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.natural",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.natural",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.natural.landcover",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.natural.landcover",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "weight": 6
+      }
+    ]
+  }
+] -->
+
+<!-- https://www.pngtosvg.com/ -->

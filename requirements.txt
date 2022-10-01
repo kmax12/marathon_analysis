@@ -1,9 +1,12 @@
-jupyter
-pandas
-requests
-scikit-learn
-pyquery
-bokeh
-dask
-tqdm
-matplotlib
+jupyter==1.0.0
+pandas==1.4.0
+requests==2.27.1
+dask==2022.1.1
+distributed==2022.1.1
+tqdm==4.62.3
+plotly==5.10.0
+kaleido==0.2.1
+statsmodels==0.13.2
+# scikit-learn
+# pyquery
+# bokeh
