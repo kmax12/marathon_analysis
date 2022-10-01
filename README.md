@@ -1,10 +1,12 @@
 # Marathon Analysis
 
-<!-- TODO add image -->
+<p align="center">
+  <img  src="https://github.com/kmax12/marathon_analysis/blob/main/output/finish_time_vs_percent_slowdown.png">
+</p>
 
-Notebooks for analyzing marathon split and finish times.
+**Notebooks for analyzing marathon split and finish times.**
 
-Read more: https://www.jmaxkanter.com/posts/chicago-marathon-2022/
+**Read more:** https://www.jmaxkanter.com/posts/chicago-marathon-2022/
 
 ## Getting Started
 
@@ -24,12 +26,10 @@ A scrapper for the 2021 Chicago Marathon is available in `Scrape Data.ipynb`. Ru
 
 You can run the analyze yourself using `Analyze Data.ipynb`.
 
-## Run it yourself
+## Use your own data
 
-The input format is a CSV file with run runner per row and column for each split. You can see example CSV file is here.
-
-Note: Any data stored in the common format can be used.
+The input format is a CSV file with one runner per row and column for each split. You can see example CSV file [here](https://github.com/kmax12/marathon_analysis/blob/main/sample_data.csv).
 
 ## Feedback
 
-If you're interested in analyzing marathon data, please reach out! Would love to hear how I can improve this
+If you found this interesting or have ideas on how to improve, please post a GitHub issue or reach out via email! I would love to hear from you
