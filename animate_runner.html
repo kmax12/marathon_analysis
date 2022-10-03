@@ -111,10 +111,6 @@
         
                 
                 var distanceBetwenSplits = nextSplit - currentSplit
-
-                
-
-                
                 
                 var progressToNextSplit = (this.time - currentSplitTime) / (nextSplitTime - currentSplitTime)
                 var distance = splitOrder[this.currentSplitIndex] + distanceBetwenSplits*progressToNextSplit
@@ -140,10 +136,19 @@
         }
 
         function tickSecond() {
+            maxTime = 0
             for (const r in allRunners){
                 if (!allRunners[r].finished){
-                    allRunners[r].progressTime(10)
-                }
+                    allRunners[r].progressTime(16)
+                    if (allRunners[r].time > maxTime){
+                            maxTime = allRunners[r].time
+                    }
+                  }
+                
+            }
+
+            if (maxTime ==0 ){
+                return
             }
 
             function convertSeconds(seconds) {
@@ -153,7 +158,6 @@
                         convert(seconds % 60)
             }
 
-            timeDisplay.innerHTML = convertSeconds(allRunners.slice(-1)[0].time)
 
             mainContext.clearRect(0, 0, canvasWidth, canvasHeight);
             for (const r in allRunners){
@@ -161,6 +165,11 @@
                     drawRunner(allRunners[r])
                 }
             }
+            
+
+            
+
+            timeDisplay.innerHTML = convertSeconds(maxTime)
             
             window.requestAnimationFrame(tickSecond)
         }
@@ -189,7 +198,7 @@
 
                 skipRunner=true
                 // include if faster than 
-                if (runner[42.195] < 4.1*60*60 && runner[42.195] > 3.9*60*60 ){
+                if (runner[42.195] < (4*60*60 + 5*60) && runner[42.195] > (3*60*60 + 55*60)){
                     console.log(runner[42.195]/60/60)
                     skipRunner = false;
                 }
@@ -216,7 +225,7 @@
             }
 
             allRunners = allRunners//.slice(0,500);
-            allRunners.sort(function(a, b){return a.finishTime < b.finishTime});
+            allRunners.sort(function(a, b){return Math.random() < 0.5 ? -1 : 1;});
             console.log(allRunners)
             
             tickSecond()
