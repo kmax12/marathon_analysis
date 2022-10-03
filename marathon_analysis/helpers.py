@@ -53,7 +53,9 @@ def seconds_to_pace(seconds):
 
 def save_figure(fig, name):
     fig.write_html(f"output/{name}.html", config={'displaylogo': False})
-    fig.write_image(f"output/{name}.png")
+    scale = 2.8
+    fig.write_image(F'output/{name}.jpg', scale=scale,
+                    width=2200/scale, height=1500/scale)
     return fig
 
 
