@@ -1,7 +1,7 @@
 # Marathon Analysis
 
 <p align="center">
-  <img  src="https://github.com/kmax12/marathon_analysis/blob/main/output/finish_time_vs_percent_slowdown.png">
+  <img  src="https://github.com/kmax12/marathon_analysis/blob/main/output/finish_time_vs_percent_slowdown.jpg">
 </p>
 
 **Notebooks for analyzing marathon split and finish times.**
